@@ -15,6 +15,17 @@ module CarrierwaveGlobalize
     @carrierwave_globalize_initialized = true
   end
 
+  def mount_translated_uploaders(column, uploader = nil, options = {}, &block)
+    mount_uploaders(column, uploader, options, &block)
+    delegate :"#{column}_will_change!", :"#{column}_changed?",
+             to: :translation
+
+    return if carrierwave_globalize_initialized?
+
+    include CarrierwaveGlobalize::InstanceMethods
+    @carrierwave_globalize_initialized = true
+  end
+
   def carrierwave_globalize_initialized?
     @carrierwave_globalize_initialized || false
   end
